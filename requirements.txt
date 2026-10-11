@@ -1,0 +1,10 @@
+Django==6.1.2
+djangorestframework==3.18.3
+drf-spectacular==0.30.0
+PyYAML==6.0.3
+uritemplate==4.2.0
+fastapi==0.143.0
+pydantic==2.13.5
+uvicorn==0.53.0
+gunicorn==26.2.0
+httpx==0.28.1

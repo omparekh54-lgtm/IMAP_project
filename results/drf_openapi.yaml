@@ -1,0 +1,309 @@
+openapi: 3.0.3
+info:
+  title: Countries API (DRF)
+  version: 1.0.0
+paths:
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - ht
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /countries:
+    get:
+      operationId: countries_list
+      parameters:
+      - in: query
+        name: min_population
+        schema:
+          type: integer
+          minimum: 0
+      - in: query
+        name: region
+        schema:
+          enum:
+          - Africa
+          - Americas
+          - Asia
+          - Europe
+          - Oceania
+          - Antarctic
+          type: string
+          minLength: 1
+        description: |-
+          * `Africa` - Africa
+          * `Americas` - Americas
+          * `Asia` - Asia
+          * `Europe` - Europe
+          * `Oceania` - Oceania
+          * `Antarctic` - Antarctic
+      - in: query
+        name: search
+        schema:
+          type: string
+          maxLength: 50
+          minLength: 1
+      tags:
+      - countries
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Country'
+          description: ''
+    post:
+      operationId: countries_create
+      tags:
+      - countries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Country'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Country'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Country'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Country'
+          description: ''
+  /countries/{code}:
+    get:
+      operationId: countries_retrieve
+      parameters:
+      - in: path
+        name: code
+        schema:
+          type: string
+        required: true
+      tags:
+      - countries
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Country'
+          description: ''
+  /slow:
+    get:
+      operationId: slow_retrieve
+      description: Simulates a slow upstream call (blocking sleep, as a sync view
+        would do).
+      parameters:
+      - in: query
+        name: delay
+        schema:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+          default: 0.2
+      tags:
+      - slow
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+components:
+  schemas:
+    Country:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 1
+        cca2:
+          type: string
+          pattern: ^[A-Z]{2}$
+        cca3:
+          type: string
+          pattern: ^[A-Z]{3}$
+        region:
+          $ref: '#/components/schemas/RegionEnum'
+        capital:
+          type: string
+          maxLength: 100
+        population:
+          type: integer
+          minimum: 0
+        area:
+          type: number
+          format: double
+          minimum: 0
+      required:
+      - cca2
+      - cca3
+      - name
+      - population
+      - region
+    RegionEnum:
+      enum:
+      - Africa
+      - Americas
+      - Asia
+      - Europe
+      - Oceania
+      - Antarctic
+      type: string
+      description: |-
+        * `Africa` - Africa
+        * `Americas` - Americas
+        * `Asia` - Asia
+        * `Europe` - Europe
+        * `Oceania` - Oceania
+        * `Antarctic` - Antarctic

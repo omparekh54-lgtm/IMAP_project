@@ -1,0 +1,403 @@
+{
+  "DRF": {
+    "valid POST": [
+      201,
+      {
+        "name": "Testland",
+        "cca2": "TL",
+        "cca3": "TST",
+        "region": "Europe",
+        "capital": "Testville",
+        "population": 1000,
+        "area": 12.5
+      }
+    ],
+    "duplicate POST (same cca2)": [
+      409,
+      {
+        "detail": "Country already exists"
+      }
+    ],
+    "missing required fields": [
+      400,
+      {
+        "cca2": [
+          "This field is required."
+        ],
+        "cca3": [
+          "This field is required."
+        ],
+        "region": [
+          "This field is required."
+        ],
+        "population": [
+          "This field is required."
+        ]
+      }
+    ],
+    "cca2 not 2 uppercase letters": [
+      400,
+      {
+        "cca2": [
+          "This value does not match the required pattern."
+        ]
+      }
+    ],
+    "region not in allowed list": [
+      400,
+      {
+        "region": [
+          "\"Mars\" is not a valid choice."
+        ]
+      }
+    ],
+    "negative population": [
+      400,
+      {
+        "population": [
+          "Ensure this value is greater than or equal to 0."
+        ]
+      }
+    ],
+    "population wrong type (string)": [
+      400,
+      {
+        "population": [
+          "A valid integer is required."
+        ]
+      }
+    ],
+    "population numeric string '5' (coercion)": [
+      201,
+      {
+        "name": "Testland",
+        "cca2": "TE",
+        "cca3": "TTE",
+        "region": "Europe",
+        "capital": "Testville",
+        "population": 5,
+        "area": 12.5
+      }
+    ],
+    "unknown extra field": [
+      201,
+      {
+        "name": "Testland",
+        "cca2": "TF",
+        "cca3": "TTF",
+        "region": "Europe",
+        "capital": "Testville",
+        "population": 1000,
+        "area": 12.5
+      }
+    ],
+    "malformed JSON body": [
+      400,
+      {
+        "detail": "JSON parse error - Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+      }
+    ],
+    "GET bad region query": [
+      400,
+      {
+        "region": [
+          "\"Mars\" is not a valid choice."
+        ]
+      }
+    ],
+    "GET min_population=abc": [
+      400,
+      {
+        "min_population": [
+          "A valid integer is required."
+        ]
+      }
+    ],
+    "GET unknown code": [
+      404,
+      {
+        "detail": "Not found"
+      }
+    ],
+    "GET malformed code 'XX1'": [
+      400,
+      {
+        "detail": "Code must be 2 or 3 letters"
+      }
+    ],
+    "GET /slow?delay=99 (out of range)": [
+      400,
+      {
+        "delay": [
+          "Ensure this value is less than or equal to 1."
+        ]
+      }
+    ]
+  },
+  "FastAPI": {
+    "valid POST": [
+      201,
+      {
+        "name": "Testland",
+        "cca2": "TL",
+        "cca3": "TST",
+        "region": "Europe",
+        "capital": "Testville",
+        "population": 1000,
+        "area": 12.5
+      }
+    ],
+    "duplicate POST (same cca2)": [
+      409,
+      {
+        "detail": "Country already exists"
+      }
+    ],
+    "missing required fields": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "cca2"
+            ],
+            "msg": "Field required",
+            "input": {
+              "name": "Only a name"
+            }
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "cca3"
+            ],
+            "msg": "Field required",
+            "input": {
+              "name": "Only a name"
+            }
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "region"
+            ],
+            "msg": "Field required",
+            "input": {
+              "name": "Only a name"
+            }
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "population"
+            ],
+            "msg": "Field required",
+            "input": {
+              "name": "Only a name"
+            }
+          }
+        ]
+      }
+    ],
+    "cca2 not 2 uppercase letters": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "string_pattern_mismatch",
+            "loc": [
+              "body",
+              "cca2"
+            ],
+            "msg": "String should match pattern '^[A-Z]{2}$'",
+            "input": "tl1",
+            "ctx": {
+              "pattern": "^[A-Z]{2}$"
+            }
+          }
+        ]
+      }
+    ],
+    "region not in allowed list": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "literal_error",
+            "loc": [
+              "body",
+              "region"
+            ],
+            "msg": "Input should be 'Africa', 'Americas', 'Asia', 'Europe', 'Oceania' or 'Antarctic'",
+            "input": "Mars",
+            "ctx": {
+              "expected": "'Africa', 'Americas', 'Asia', 'Europe', 'Oceania' or 'Antarctic'"
+            }
+          }
+        ]
+      }
+    ],
+    "negative population": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "greater_than_equal",
+            "loc": [
+              "body",
+              "population"
+            ],
+            "msg": "Input should be greater than or equal to 0",
+            "input": -1,
+            "ctx": {
+              "ge": 0
+            }
+          }
+        ]
+      }
+    ],
+    "population wrong type (string)": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "int_parsing",
+            "loc": [
+              "body",
+              "population"
+            ],
+            "msg": "Input should be a valid integer, unable to parse string as an integer",
+            "input": "lots"
+          }
+        ]
+      }
+    ],
+    "population numeric string '5' (coercion)": [
+      201,
+      {
+        "name": "Testland",
+        "cca2": "TE",
+        "cca3": "TTE",
+        "region": "Europe",
+        "capital": "Testville",
+        "population": 5,
+        "area": 12.5
+      }
+    ],
+    "unknown extra field": [
+      201,
+      {
+        "name": "Testland",
+        "cca2": "TF",
+        "cca3": "TTF",
+        "region": "Europe",
+        "capital": "Testville",
+        "population": 1000,
+        "area": 12.5
+      }
+    ],
+    "malformed JSON body": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "json_invalid",
+            "loc": [
+              "body",
+              1
+            ],
+            "msg": "JSON decode error",
+            "input": {},
+            "ctx": {
+              "error": "Expecting property name enclosed in double quotes"
+            }
+          }
+        ]
+      }
+    ],
+    "GET bad region query": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "literal_error",
+            "loc": [
+              "query",
+              "region"
+            ],
+            "msg": "Input should be 'Africa', 'Americas', 'Asia', 'Europe', 'Oceania' or 'Antarctic'",
+            "input": "Mars",
+            "ctx": {
+              "expected": "'Africa', 'Americas', 'Asia', 'Europe', 'Oceania' or 'Antarctic'"
+            }
+          }
+        ]
+      }
+    ],
+    "GET min_population=abc": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "int_parsing",
+            "loc": [
+              "query",
+              "min_population"
+            ],
+            "msg": "Input should be a valid integer, unable to parse string as an integer",
+            "input": "abc"
+          }
+        ]
+      }
+    ],
+    "GET unknown code": [
+      404,
+      {
+        "detail": "Not found"
+      }
+    ],
+    "GET malformed code 'XX1'": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "string_pattern_mismatch",
+            "loc": [
+              "path",
+              "code"
+            ],
+            "msg": "String should match pattern '^[A-Za-z]{2,3}$'",
+            "input": "XX1",
+            "ctx": {
+              "pattern": "^[A-Za-z]{2,3}$"
+            }
+          }
+        ]
+      }
+    ],
+    "GET /slow?delay=99 (out of range)": [
+      422,
+      {
+        "detail": [
+          {
+            "type": "less_than_equal",
+            "loc": [
+              "query",
+              "delay"
+            ],
+            "msg": "Input should be less than or equal to 1",
+            "input": "99",
+            "ctx": {
+              "le": 1.0
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
