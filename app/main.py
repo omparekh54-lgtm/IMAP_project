@@ -1,4 +1,8 @@
-"""Vercel entrypoint for the IMAP FastAPI comparison app."""
+"""Vercel entrypoint for the IMAP FastAPI comparison app.
+
+The original DRF and FastAPI implementations remain unchanged; this module only exposes
+FastAPI at Vercel's conventional Python entrypoint.
+"""
 from fastapi_app.main import app
 
 
